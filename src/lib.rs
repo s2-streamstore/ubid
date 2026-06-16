@@ -143,18 +143,13 @@ impl<const N: usize> From<Ubid<N>> for bytes::Bytes {
 #[cfg(feature = "proptest")]
 impl<const N: usize> proptest::arbitrary::Arbitrary for Ubid<N> {
     type Parameters = ();
-    type Strategy = proptest::strategy::BoxedStrategy<Self>;
+    type Strategy =
+        proptest::strategy::MapInto<<[u8; N] as proptest::arbitrary::Arbitrary>::Strategy, Self>;
 
     fn arbitrary_with(_args: Self::Parameters) -> Self::Strategy {
         use proptest::prelude::*;
-        use rand::SeedableRng as _;
 
-        any::<u64>()
-            .prop_map(|seed| {
-                let mut rng = rand::rngs::SmallRng::seed_from_u64(seed);
-                Self::generate_with(&mut rng)
-            })
-            .boxed()
+        any::<[u8; N]>().prop_map_into()
     }
 }
 
