@@ -41,13 +41,13 @@ assert_eq!(id, decoded);
 The `ubidgen` binary generates one ID for each requested width:
 
 ```console
-$ cargo install --git https://github.com/s2-streamstore/ubid
+$ cargo install ubid
 ```
 
-After the crate is published to crates.io:
+To install directly from GitHub:
 
 ```console
-$ cargo install ubid
+$ cargo install --git https://github.com/s2-streamstore/ubid
 ```
 
 ```console
