@@ -7,12 +7,12 @@ UBIDs are useful when you want compact, opaque IDs that can be generated without
 crate provides a generic `Ubid<N>` type, where `N` is the number of random bytes, plus common
 aliases:
 
-| Alias | Bytes | Bits | Base32 characters | Typical use |
-| --- | ---: | ---: | ---: | --- |
-| `Ubid40` | 5 | 40 | 8 | Small spaces where collisions can be detected and handled |
-| `Ubid80` | 10 | 80 | 16 | Larger spaces where collisions can be detected and handled |
-| `Ubid120` | 15 | 120 | 24 | High-cardinality IDs without coordination |
-| `Ubid160` | 20 | 160 | 32 | Conservative choice with the largest collision margin |
+| Alias | Bytes | Bits | Base32 characters | Example | Typical use |
+| --- | ---: | ---: | ---: | --- | --- |
+| `Ubid40` | 5 | 40 | 8 | `a8mhvtc9` | Small spaces where collisions can be detected and handled |
+| `Ubid80` | 10 | 80 | 16 | `q08wg7jan2mnp0t0` | Larger spaces where collisions can be detected and handled |
+| `Ubid120` | 15 | 120 | 24 | `v18008kg68djyx6hfpvpmpe4` | High-cardinality IDs without coordination |
+| `Ubid160` | 20 | 160 | 32 | `n2zeseq2ccxtbdq60j2bd03qrbwxw2rv` | Conservative choice with the largest collision margin |
 
 ## Motivation
 
@@ -34,6 +34,16 @@ let encoded = id.to_string();
 let decoded: Ubid120 = encoded.parse().unwrap();
 
 assert_eq!(id, decoded);
+```
+
+## Command Line
+
+The `ubidgen` binary generates one ID for each requested width:
+
+```console
+$ ubidgen 80 120
+q08wg7jan2mnp0t0
+v18008kg68djyx6hfpvpmpe4
 ```
 
 ## Choosing A Width
