@@ -7,7 +7,7 @@ Decoding accepts Crockford aliases, including uppercase letters, `o`/`O` for `0`
 `i`/`l`/`I`/`L` for `1`.
 
 UBIDs are useful when you want compact, opaque IDs that can be generated without coordination. The
-crate provides a generic `Ubid<N>` type, where `N` is the number of random bytes, plus common
+crate provides a generic `Ubid<N>` type, where `N` is one of the standard byte widths, plus common
 aliases:
 
 | Alias | Bytes | Bits | Base32 characters | Example | Typical use |
