@@ -1,7 +1,10 @@
 # ubid
 
-Fixed-width random identifiers with a binary representation and lowercase Crockford base32 text
-encoding.
+Fixed-width random identifiers with a binary representation and canonical lowercase Crockford
+base32 text encoding.
+
+Decoding accepts Crockford aliases, including uppercase letters, `o`/`O` for `0`, and
+`i`/`l`/`I`/`L` for `1`.
 
 UBIDs are useful when you want compact, opaque IDs that can be generated without coordination. The
 crate provides a generic `Ubid<N>` type, where `N` is the number of random bytes, plus common
