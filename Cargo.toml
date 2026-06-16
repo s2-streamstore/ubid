@@ -1,0 +1,24 @@
+[package]
+name = "ubid"
+version = "0.1.0"
+description = "Fixed-width random identifiers with Crockford base32 encoding."
+edition = "2024"
+license = "MIT"
+publish = false
+readme = "README.md"
+repository = "https://github.com/s2-streamstore/ubid"
+
+[features]
+default = []
+bytes = ["dep:bytes"]
+proptest = ["dep:proptest"]
+
+[dependencies]
+bytes = { version = "1", optional = true }
+fast32 = "1"
+proptest = { version = "1", optional = true }
+rand = "0.10"
+
+[dev-dependencies]
+bytes = "1"
+proptest = "1"
