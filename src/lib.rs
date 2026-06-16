@@ -58,7 +58,10 @@ impl<const N: usize> Ubid<N> {
         base32::CROCKFORD_LOWER.encode(&self.0)
     }
 
-    /// Decodes a UBID from lowercase Crockford base32.
+    /// Decodes a UBID from Crockford base32.
+    ///
+    /// Encoded UBIDs are canonical lowercase. Decoding is tolerant and accepts Crockford aliases,
+    /// including uppercase letters, `o`/`O` for `0`, and `i`/`l`/`I`/`L` for `1`.
     ///
     /// Decoding fails if the input is not valid base32 or does not decode to exactly `N` bytes.
     pub fn decode(s: &str) -> Result<Ubid<N>, DecodeError> {
