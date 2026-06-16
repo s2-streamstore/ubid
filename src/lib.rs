@@ -6,6 +6,28 @@ use std::{array::TryFromSliceError, fmt, ops::Deref, str::FromStr};
 use fast32::base32;
 use rand::Rng;
 
+/// A marker trait for standard UBID byte widths.
+///
+/// This trait is implemented for `()` at the standard byte widths: 5, 10, 15, and 20 bytes.
+/// Generic code can use a `where (): StandardWidth<N>` bound to accept any supported UBID width.
+///
+/// ```
+/// use ubid::{StandardWidth, Ubid};
+///
+/// fn as_text<const N: usize>(id: Ubid<N>) -> String
+/// where
+///     (): StandardWidth<N>,
+/// {
+///     id.to_string()
+/// }
+/// ```
+pub trait StandardWidth<const N: usize> {}
+
+impl StandardWidth<5> for () {}
+impl StandardWidth<10> for () {}
+impl StandardWidth<15> for () {}
+impl StandardWidth<20> for () {}
+
 /// A 40-bit UBID backed by 5 random bytes.
 pub type Ubid40 = Ubid<5>;
 
@@ -32,12 +54,18 @@ impl std::error::Error for DecodeError {}
 
 /// A fixed-width random identifier backed by exactly `N` bytes.
 ///
-/// The const parameter `N` is a byte count. For example, `Ubid<15>` is a 120-bit identifier and is
-/// available as the `Ubid120` alias.
+/// The const parameter `N` is a byte count and must be one of the standard UBID widths: 5, 10, 15,
+/// or 20 bytes. For example, `Ubid<15>` is a 120-bit identifier and is available as the `Ubid120`
+/// alias.
 #[derive(PartialEq, PartialOrd, Eq, Ord, Hash, Clone, Copy)]
-pub struct Ubid<const N: usize>([u8; N]);
+pub struct Ubid<const N: usize>([u8; N])
+where
+    (): StandardWidth<N>;
 
-impl<const N: usize> Ubid<N> {
+impl<const N: usize> Ubid<N>
+where
+    (): StandardWidth<N>,
+{
     /// Generates a new UBID using the thread-local random number generator.
     pub fn generate() -> Ubid<N> {
         Self::generate_with(&mut rand::rng())
@@ -80,7 +108,10 @@ impl<const N: usize> Ubid<N> {
     }
 }
 
-impl<const N: usize> TryFrom<&str> for Ubid<N> {
+impl<const N: usize> TryFrom<&str> for Ubid<N>
+where
+    (): StandardWidth<N>,
+{
     type Error = DecodeError;
 
     fn try_from(value: &str) -> Result<Self, Self::Error> {
@@ -88,7 +119,10 @@ impl<const N: usize> TryFrom<&str> for Ubid<N> {
     }
 }
 
-impl<const N: usize> FromStr for Ubid<N> {
+impl<const N: usize> FromStr for Ubid<N>
+where
+    (): StandardWidth<N>,
+{
     type Err = DecodeError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
@@ -96,19 +130,28 @@ impl<const N: usize> FromStr for Ubid<N> {
     }
 }
 
-impl<const N: usize> fmt::Display for Ubid<N> {
+impl<const N: usize> fmt::Display for Ubid<N>
+where
+    (): StandardWidth<N>,
+{
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         f.write_str(&self.encode())
     }
 }
 
-impl<const N: usize> fmt::Debug for Ubid<N> {
+impl<const N: usize> fmt::Debug for Ubid<N>
+where
+    (): StandardWidth<N>,
+{
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "Ubid{}{{{}}}", N * 8, &self.encode())
     }
 }
 
-impl<const N: usize> Deref for Ubid<N> {
+impl<const N: usize> Deref for Ubid<N>
+where
+    (): StandardWidth<N>,
+{
     type Target = [u8; N];
 
     fn deref(&self) -> &Self::Target {
@@ -116,19 +159,28 @@ impl<const N: usize> Deref for Ubid<N> {
     }
 }
 
-impl<const N: usize> AsRef<[u8; N]> for Ubid<N> {
+impl<const N: usize> AsRef<[u8; N]> for Ubid<N>
+where
+    (): StandardWidth<N>,
+{
     fn as_ref(&self) -> &[u8; N] {
         &self.0
     }
 }
 
-impl<const N: usize> From<[u8; N]> for Ubid<N> {
+impl<const N: usize> From<[u8; N]> for Ubid<N>
+where
+    (): StandardWidth<N>,
+{
     fn from(value: [u8; N]) -> Self {
         Ubid(value)
     }
 }
 
-impl<const N: usize> TryFrom<&[u8]> for Ubid<N> {
+impl<const N: usize> TryFrom<&[u8]> for Ubid<N>
+where
+    (): StandardWidth<N>,
+{
     type Error = TryFromSliceError;
 
     fn try_from(value: &[u8]) -> Result<Self, Self::Error> {
@@ -137,14 +189,20 @@ impl<const N: usize> TryFrom<&[u8]> for Ubid<N> {
 }
 
 #[cfg(any(feature = "bytes", test))]
-impl<const N: usize> From<Ubid<N>> for bytes::Bytes {
+impl<const N: usize> From<Ubid<N>> for bytes::Bytes
+where
+    (): StandardWidth<N>,
+{
     fn from(ubid: Ubid<N>) -> Self {
         bytes::Bytes::copy_from_slice(&ubid.0)
     }
 }
 
 #[cfg(feature = "proptest")]
-impl<const N: usize> proptest::arbitrary::Arbitrary for Ubid<N> {
+impl<const N: usize> proptest::arbitrary::Arbitrary for Ubid<N>
+where
+    (): StandardWidth<N>,
+{
     type Parameters = ();
     type Strategy =
         proptest::strategy::MapInto<<[u8; N] as proptest::arbitrary::Arbitrary>::Strategy, Self>;
