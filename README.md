@@ -44,12 +44,6 @@ The `ubidgen` binary generates one ID for each requested width:
 $ cargo install ubid
 ```
 
-To install directly from GitHub:
-
-```console
-$ cargo install --git https://github.com/s2-streamstore/ubid
-```
-
 ```console
 $ ubidgen 80 120
 q08wg7jan2mnp0t0
