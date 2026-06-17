@@ -4,7 +4,6 @@
 use std::{array::TryFromSliceError, fmt, ops::Deref, str::FromStr};
 
 use fast32::base32;
-use rand::Rng;
 
 /// A marker trait for standard UBID byte widths.
 ///
@@ -66,19 +65,20 @@ impl<const N: usize> Ubid<N>
 where
     (): StandardWidth<N>,
 {
-    /// Generates a new UBID using the thread-local random number generator.
+    /// Generates a new UBID using the operating system's random number source.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the operating system fails to provide random bytes.
     pub fn generate() -> Ubid<N> {
-        Self::generate_with(&mut rand::rng())
+        Self::try_generate().expect("failed to generate UBID using OS randomness")
     }
 
-    /// Generates a new UBID using the supplied random number generator.
-    ///
-    /// This is useful for deterministic tests, simulations, and callers that need to control their
-    /// randomness source.
-    pub fn generate_with(rng: &mut impl Rng) -> Ubid<N> {
+    /// Attempts to generate a new UBID using the operating system's random number source.
+    pub fn try_generate() -> Result<Ubid<N>, getrandom::Error> {
         let mut bytes = [0; N];
-        rng.fill_bytes(&mut bytes);
-        Ubid(bytes)
+        getrandom::fill(&mut bytes)?;
+        Ok(Ubid(bytes))
     }
 
     /// Encodes this UBID as lowercase Crockford base32.
