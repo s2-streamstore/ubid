@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.4](https://github.com/s2-streamstore/ubid/compare/0.1.3...0.1.4) - 2026-06-17
+
+### Other
+
+- improve crates.io discoverability ([#8](https://github.com/s2-streamstore/ubid/pull/8))
+
 ## [0.1.3](https://github.com/s2-streamstore/ubid/compare/0.1.2...0.1.3) - 2026-06-16
 
 ### Other
