@@ -6,6 +6,8 @@ edition = "2024"
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/s2-streamstore/ubid"
+keywords = ["unique", "id", "random", "crockford", "base32"]
+categories = ["encoding"]
 
 [features]
 default = []
