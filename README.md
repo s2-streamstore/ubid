@@ -71,6 +71,8 @@ retention windows where a wider margin is preferred.
 
 - `bytes`: enables conversion from `Ubid<N>` into `bytes::Bytes`.
 - `proptest`: implements `proptest::arbitrary::Arbitrary` for `Ubid<N>`.
+- `serde`: implements `serde::Serialize` and `serde::Deserialize` for `Ubid<N>` as canonical
+  Crockford base32 strings.
 
 ## License
 

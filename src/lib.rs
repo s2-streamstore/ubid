@@ -188,6 +188,52 @@ where
     }
 }
 
+#[cfg(feature = "serde")]
+impl<const N: usize> serde::Serialize for Ubid<N>
+where
+    (): StandardWidth<N>,
+{
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        serializer.serialize_str(&self.encode())
+    }
+}
+
+#[cfg(feature = "serde")]
+impl<'de, const N: usize> serde::Deserialize<'de> for Ubid<N>
+where
+    (): StandardWidth<N>,
+{
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        struct UbidVisitor<const N: usize>;
+
+        impl<'de, const N: usize> serde::de::Visitor<'de> for UbidVisitor<N>
+        where
+            (): StandardWidth<N>,
+        {
+            type Value = Ubid<N>;
+
+            fn expecting(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+                write!(f, "a {}-character Crockford base32 UBID string", N / 5 * 8)
+            }
+
+            fn visit_str<E>(self, value: &str) -> Result<Self::Value, E>
+            where
+                E: serde::de::Error,
+            {
+                Ubid::decode(value).map_err(E::custom)
+            }
+        }
+
+        deserializer.deserialize_str(UbidVisitor::<N>)
+    }
+}
+
 #[cfg(any(feature = "bytes", test))]
 impl<const N: usize> From<Ubid<N>> for bytes::Bytes
 where
@@ -240,6 +286,25 @@ mod test {
             prop_assert_eq!(ubid, converted);
         }
     );
+
+    #[cfg(feature = "serde")]
+    #[test]
+    fn serde_roundtrip() {
+        let ubid = Ubid80::from([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]);
+        let encoded = ubid.encode();
+
+        let serialized = serde_json::to_string(&ubid).unwrap();
+        assert_eq!(format!("\"{encoded}\""), serialized);
+
+        let deserialized: Ubid80 = serde_json::from_str(&serialized).unwrap();
+        assert_eq!(ubid, deserialized);
+    }
+
+    #[cfg(feature = "serde")]
+    #[test]
+    fn serde_rejects_invalid_text() {
+        assert!(serde_json::from_str::<Ubid80>("\"not-a-ubid\"").is_err());
+    }
 
     #[cfg(feature = "proptest")]
     proptest!(
