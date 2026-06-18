@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.5](https://github.com/s2-streamstore/ubid/compare/0.1.4...0.1.5) - 2026-06-18
+
+### Added
+
+- add serde feature ([#10](https://github.com/s2-streamstore/ubid/pull/10))
+
+### Other
+
+- Remove runtime fast32 dependency ([#12](https://github.com/s2-streamstore/ubid/pull/12))
+
 ## [0.1.4](https://github.com/s2-streamstore/ubid/compare/0.1.3...0.1.4) - 2026-06-17
 
 ### Other
