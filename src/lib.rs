@@ -117,12 +117,10 @@ where
 {
     let encoded_len = N / 5 * 8;
 
-    for (chunk, encoded_chunk) in bytes
-        .chunks_exact(5)
-        .zip(out[..encoded_len].chunks_exact_mut(8))
-    {
-        let [b0, b1, b2, b3, b4] = chunk.try_into().expect("chunks are exactly 5 bytes");
+    let (chunks, _) = bytes.as_chunks::<5>();
+    let (encoded_chunks, _) = out[..encoded_len].as_chunks_mut::<8>();
 
+    for (&[b0, b1, b2, b3, b4], encoded_chunk) in chunks.iter().zip(encoded_chunks) {
         encoded_chunk[0] = CROCKFORD_LOWER[(b0 >> 3) as usize];
         encoded_chunk[1] = CROCKFORD_LOWER[(((b0 & 0b0000_0111) << 2) | (b1 >> 6)) as usize];
         encoded_chunk[2] = CROCKFORD_LOWER[((b1 & 0b0011_1110) >> 1) as usize];
@@ -157,11 +155,11 @@ where
 
     let mut decoded = [0; N];
 
-    for (chunk_index, (encoded_chunk, decoded_chunk)) in s
-        .as_bytes()
-        .chunks_exact(8)
-        .zip(decoded.chunks_exact_mut(5))
-        .enumerate()
+    let (encoded_chunks, _) = s.as_bytes().as_chunks::<8>();
+    let (decoded_chunks, _) = decoded.as_chunks_mut::<5>();
+
+    for (chunk_index, (encoded_chunk, decoded_chunk)) in
+        encoded_chunks.iter().zip(decoded_chunks).enumerate()
     {
         let offset = chunk_index * 8;
         let b0 = decode_symbol(encoded_chunk[0], offset)?;
