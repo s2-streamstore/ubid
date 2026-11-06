@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.1.6](https://github.com/s2-streamstore/ubid/compare/0.1.5...0.1.6) - 2026-11-06
+
+### Other
+
+- fix clippy lint, slim proptest features, update lockfile ([#14](https://github.com/s2-streamstore/ubid/pull/14))
+
 ## [0.1.5](https://github.com/s2-streamstore/ubid/compare/0.1.4...0.1.5) - 2026-06-18
 
 ### Added
